@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Library
 ```{r}
 library(tidyverse)
+library(readxl)
 ```
 
 # Problem 1
@@ -42,4 +43,15 @@ NYCsub_tidy_data = gather(NYCsub_data, key = route, value = route_name, route1:r
 
 count(distinct(NYCsub_tidy_data, route_name == "A"))
 count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))
+```
+
+# Problem 2
+
+Read and clean the data
+```{r}
+Healthy_data = 
+  read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
+  janitor::clean_names(dat = .) %>% 
+  na.omit(dumpster) %>% 
+  mutate(.data = ., sports_balls = as.integer(round(sports_balls)))
 ```
