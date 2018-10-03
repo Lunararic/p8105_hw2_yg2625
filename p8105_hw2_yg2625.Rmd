@@ -16,26 +16,30 @@ library(tidyverse)
 
 # Problem 1
 
+Clean the data and convert the entry variable
 ```{r}
 NYCsub_data = 
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names(dat = .) %>% 
-  select(.data = ., line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, entrance_type, ada, ada_notes) %>% 
+  select(.data = ., line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada, ada_notes) %>% 
   mutate(.data = ., entry = ifelse(entry == "YES", TRUE, FALSE))
 
 NYCsub_data 
 ```
 
+
+Answering question with data
 ```{r}
 dim(NYCsub_data)
 count(distinct(NYCsub_data, station_name))
 count(subset(NYCsub_data, ada == TRUE))
 count(subset(NYCsub_data, vending == "NO" & entry == TRUE))/count(NYCsub_data)
-
 ```
 
+Reformat data and answer related question
 ```{r}
+NYCsub_tidy_data = gather(NYCsub_data, key = route, value = route_name, route1:route11)
 
+count(distinct(NYCsub_tidy_data, route_name == "A"))
+count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))
 ```
-
-
