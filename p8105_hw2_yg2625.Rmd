@@ -23,7 +23,19 @@ NYCsub_data =
   select(.data = ., line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, entrance_type, ada, ada_notes) %>% 
   mutate(.data = ., entry = ifelse(entry == "YES", TRUE, FALSE))
 
-
 NYCsub_data 
+```
+
+```{r}
+dim(NYCsub_data)
+count(distinct(NYCsub_data, station_name))
+count(subset(NYCsub_data, ada == TRUE))
+count(subset(NYCsub_data, vending == "NO" & entry == TRUE))/count(NYCsub_data)
 
 ```
+
+```{r}
+
+```
+
+
