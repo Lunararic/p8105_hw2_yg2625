@@ -77,8 +77,29 @@ Prec_data =
 
 ```
 
+Comment with incline code
 ```{r}
+count(Healthy_data)
+count(Prec_2016)
+count(Prec_2017)
+count(Prec_data)
 median(Healthy_data$sports_balls)
 max(Prec_2017$total)
 ```
 
+## Problem 3
+
+
+```{r}
+library(p8105.datasets)
+data(brfss_smart2010)
+brfss_smart2010_tidy = 
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(.data = ., topic == "Overall Health") %>% 
+  select(.data = ., -class, -topic, -question, -sample_size, -confidence_limit_low: -geo_location) %>% 
+  spread(key = response, value = data_value) %>% 
+  janitor::clean_names() %>% 
+  mutate(.data = ., excellent_or_very_good = excellent + very_good)
+  
+```
