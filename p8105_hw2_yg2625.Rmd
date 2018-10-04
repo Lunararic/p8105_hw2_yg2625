@@ -47,11 +47,38 @@ count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))
 
 # Problem 2
 
-Read and clean the data
+Read and clean the data from Mr. Trash
 ```{r}
 Healthy_data = 
   read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
   janitor::clean_names(dat = .) %>% 
-  na.omit(dumpster) %>% 
+  filter(.data = ., dumpster != "") %>% 
   mutate(.data = ., sports_balls = as.integer(round(sports_balls)))
 ```
+
+Read and clean precipitation data
+```{r}
+Prec_2016 =
+  read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2016 Precipitation", range = cell_rows(2:15)) %>% 
+  janitor::clean_names(dat = .) %>% 
+  filter(.data = ., total != "") %>% 
+  mutate(.data = ., year = "2016")
+
+Prec_2017 =
+  read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2017 Precipitation", range = cell_rows(2:15)) %>% 
+  janitor::clean_names(dat = .) %>% 
+  filter(.data = ., total != "") %>% 
+  mutate(.data = ., year = "2017")
+
+Prec_data = 
+  left_join(Prec_2016, Prec_2017, by = "month") %>%
+  filter(.data = ., month != "") %>% 
+  mutate(.data = ., month = month.name)
+
+```
+
+```{r}
+median(Healthy_data$sports_balls)
+max(Prec_2017$total)
+```
+
