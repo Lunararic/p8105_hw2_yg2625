@@ -16,8 +16,9 @@ library(readxl)
 ```
 
 # Problem 1
+## Data cleaning
 
-Clean the data and convert the entry variable
+Read and clean the data and convert the entry variable from character to logical
 ```{r}
 NYCsub_data = 
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
@@ -27,6 +28,9 @@ NYCsub_data =
 
 NYCsub_data 
 ```
+
+  From the data output, we could know it contains variables including `r names(NYCsub_data)`, and I clean the names to lower case and only keep the variables as required while converting the entry variable from character to logical.
+  The dimension of the dataset is `r dim(NYCsub_data)`, the current data is not tidy.
 
 
 Answering question with data
