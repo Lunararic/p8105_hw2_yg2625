@@ -29,25 +29,21 @@ NYCsub_data =
 NYCsub_data 
 ```
 
-  From the data output, we could know it contains variables including `r names(NYCsub_data)`, and I clean the names to lower case and only keep the variables as required while converting the entry variable from character to logical.
-  The dimension of the dataset is `r dim(NYCsub_data)`, the current data is not tidy.
+## Resulting data description
+From the data output, we could know it contains variables including `r names(NYCsub_data)`; And I clean the names to lower case and only keep the variables as required while converting the entry variable from character to logical; The dimension of the dataset is `r dim(NYCsub_data)`, the current data is not tidy.
 
 
-Answering question with data
-```{r}
-dim(NYCsub_data)
-count(distinct(NYCsub_data, station_name))
-count(subset(NYCsub_data, ada == TRUE))
-count(subset(NYCsub_data, vending == "NO" & entry == TRUE))/count(NYCsub_data)
-```
+## Answering question with data
+There are `r count(distinct(NYCsub_data, station_name))` distinct stations. And there are `r count(subset(NYCsub_data, ada == TRUE))` stations are ADA compliant. And the proportion of station entrances/exits without vending allow entrance is `r count(subset(NYCsub_data, vending == "NO" & entry == TRUE))/count(NYCsub_data)`
 
-Reformat data and answer related question
+
+## Reformat data
 ```{r}
 NYCsub_tidy_data = gather(NYCsub_data, key = route, value = route_name, route1:route11)
-
-count(distinct(NYCsub_tidy_data, route_name == "A"))
-count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))
 ```
+
+There are `r count(distinct(NYCsub_tidy_data, route_name == "A"))` stations serve the A train. And in these stations, `r count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))` are ADA compliant.
+
 
 # Problem 2
 
