@@ -85,8 +85,9 @@ The number of the observations in Mr. Trash is `r nrow(Healthy_data)`, in Precip
 
 
 ## Problem 3
+## Data reading and cleaning
 
-Read and clean BRFSS data
+Read and clean BRFSS data. Formating, filtering, excluding variables, structuring data and creating new variables as required.
 ```{r}
 library(p8105.datasets)
 data(brfss_smart2010)
@@ -101,25 +102,22 @@ brfss_smart2010_tidy =
   rename(.data = ., state = locationabbr, county = locationdesc)
 ```
 
-Since there's 51 distinct states, all states are included
-```{r}
-count(distinct(brfss_smart2010_tidy, county))
-count(distinct(brfss_smart2010_tidy, state))
-head(arrange(count(brfss_smart2010_tidy, state), desc(n)), 1)
-```
+## Answering questions
+There are `r count(distinct(brfss_smart2010_tidy, county))` distinct county and `r count(distinct(brfss_smart2010_tidy, state))` distinct states.Since there are 51 states, all states are included. And yes, every state is represented.
 
-Median of "excellent"
 ```{r}
-summary(subset(brfss_smart2010_tidy, year == "2002")$excellent)
+arrange(count(brfss_smart2010_tidy, state), desc(n))
 ```
+From the output above, we know NJ state is observed the most. And the median of the "Excellent" response value is `r median(subset(brfss_smart2010_tidy, year == "2002")$excellent, na.rm = TRUE)`.
 
-Histogram of "excellent"
+## Histogram of "excellent" response in 2002
 ```{r}
 ggplot(brfss_smart2010_tidy, aes(x = excellent)) +
   geom_histogram()
 ```
 
-Scatterplot showing proportion
+## Scatterplot
+Showing proportion of "Excellent" in NY and Queens County in each year from 2002 to 2010
 ```{r}
 brfss_smart2010_tidy_NQ = 
   brfss_smart2010_tidy %>% 
