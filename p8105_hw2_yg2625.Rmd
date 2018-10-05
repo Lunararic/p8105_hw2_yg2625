@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Library
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 library(readxl)
 ```
@@ -22,7 +22,7 @@ Clean the data and convert the entry variable
 NYCsub_data = 
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names(dat = .) %>% 
-  select(.data = ., line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada, ada_notes) %>% 
+  select(.data = ., line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>% 
   mutate(.data = ., entry = ifelse(entry == "YES", TRUE, FALSE))
 
 NYCsub_data 
@@ -50,7 +50,7 @@ count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))
 Read and clean the data from Mr. Trash
 ```{r}
 Healthy_data = 
-  read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., dumpster != "") %>% 
   mutate(.data = ., sports_balls = as.integer(round(sports_balls)))
@@ -59,13 +59,13 @@ Healthy_data =
 Read and clean precipitation data
 ```{r}
 Prec_2016 =
-  read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2016 Precipitation", range = cell_rows(2:15)) %>% 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2016 Precipitation", range = cell_rows(2:15)) %>% 
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., total != "") %>% 
   mutate(.data = ., year = "2016")
 
 Prec_2017 =
-  read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = "2017 Precipitation", range = cell_rows(2:15)) %>% 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = cell_rows(2:15)) %>% 
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., total != "") %>% 
   mutate(.data = ., year = "2017")
@@ -89,7 +89,7 @@ max(Prec_2017$total)
 
 ## Problem 3
 
-
+Read and clean BRFSS data
 ```{r}
 library(p8105.datasets)
 data(brfss_smart2010)
@@ -100,6 +100,37 @@ brfss_smart2010_tidy =
   select(.data = ., -class, -topic, -question, -sample_size, -confidence_limit_low: -geo_location) %>% 
   spread(key = response, value = data_value) %>% 
   janitor::clean_names() %>% 
-  mutate(.data = ., excellent_or_very_good = excellent + very_good)
-  
+  mutate(.data = ., excellent_or_very_good = excellent + very_good) %>% 
+  rename(.data = ., state = locationabbr, county = locationdesc)
 ```
+
+Since there's 51 distinct states, all states are included
+```{r}
+count(distinct(brfss_smart2010_tidy, county))
+count(distinct(brfss_smart2010_tidy, state))
+head(arrange(count(brfss_smart2010_tidy, state), desc(n)), 1)
+```
+
+Median of "excellent"
+```{r}
+summary(subset(brfss_smart2010_tidy, year == "2002")$excellent)
+```
+
+Histogram of "excellent"
+```{r}
+ggplot(brfss_smart2010_tidy, aes(x = excellent)) +
+  geom_histogram()
+```
+
+Scatterplot showing proportion
+```{r}
+brfss_smart2010_tidy_NQ = 
+  brfss_smart2010_tidy %>% 
+  filter(.data = ., county == "NY - Queens County" | state == "NY - New York County") %>% 
+  select(.data = ., -fair:-excellent_or_very_good)
+
+ggplot(brfss_smart2010_tidy_NQ, aes(x = year, y = excellent)) +
+  geom_point(aes(color = county)) +
+  theme(legend.position = "bottom")
+```
+
