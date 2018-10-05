@@ -86,7 +86,9 @@ Prec_data
 
 ```
 
-The number of the observations in Mr. Trash is `r nrow(Healthy_data)`, in Precipitation for 2016 is `r nrow(Prec_2016)`, in Precipitation for 2017 is `r nrow(Prec_2017)`, in combined dataset for 2016-2007 precipitation is `r nrow(Prec_data)`. The total precipitation in 2017 is `r sum(Prec_2017$total)` and the median of sports balls in a dumpster in 2016 is `r median(subset(Healthy_data, year == 2016)$sports_balls)`.
+The number of the observations in Mr. Trash is `r nrow(Healthy_data)`, in Precipitation for 2016 is `r nrow(Prec_2016)`, in Precipitation for 2017 is `r nrow(Prec_2017)`, in combined dataset for 2016-2007 precipitation is `r nrow(Prec_data)`. The examples of key variables in the datasets includes dumpster in Healthy_data, numerical variables "total" in precipitation data showing the amount of precipitation and character variables "year" in precipitation data indicating the year of precipitation recoreded.
+
+The total precipitation in 2017 is `r sum(Prec_2017$total)` and the median of sports balls in a dumpster in 2016 is `r median(subset(Healthy_data, year == 2016)$sports_balls)`.
 
 
 ## Problem 3
