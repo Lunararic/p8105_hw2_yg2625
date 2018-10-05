@@ -16,7 +16,7 @@ library(readxl)
 ```
 
 # Problem 1
-## Data cleaning
+## Data reading and cleaning
 
 Read and clean the data and convert the entry variable from character to logical
 ```{r}
@@ -46,17 +46,21 @@ There are `r count(distinct(NYCsub_tidy_data, route_name == "A"))` stations serv
 
 
 # Problem 2
+## Mr. Trash Dataset
 
-Read and clean the data from Mr. Trash
+Read and clean the data from Mr. Trash, specifying sheet. Renaming variable names, omitting rows and rounding numbers as required.
 ```{r}
 Healthy_data = 
   read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>%
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., dumpster != "") %>% 
+  rename(.data = ., weight = weight_tons, volume = volume_cubic_yards) %>% 
   mutate(.data = ., sports_balls = as.integer(round(sports_balls)))
 ```
 
-Read and clean precipitation data
+## Precipitation Dataset
+
+Read and clean precipitation data for 2016 and 2017. Omitting rows, adding variable year, combining datasets and converting month to character as required.
 ```{r}
 Prec_2016 =
   read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2016 Precipitation", range = cell_rows(2:15)) %>% 
@@ -77,15 +81,8 @@ Prec_data =
 
 ```
 
-Comment with incline code
-```{r}
-count(Healthy_data)
-count(Prec_2016)
-count(Prec_2017)
-count(Prec_data)
-median(Healthy_data$sports_balls)
-max(Prec_2017$total)
-```
+The number of the observations in Mr. Trash is `r nrow(Healthy_data)`, in Precipitation for 2016 is `r nrow(Prec_2016)`, in Precipitation for 2017 is `r nrow(Prec_2017)`, in combined dataset for 2016-2007 precipitation is `r nrow(Prec_data)`. The total precipitation in 2017 is `r max(Prec_2017$total)` and the median of sports balls in a dumpster in 2016 is `r median(Healthy_data$sports_balls)`.
+
 
 ## Problem 3
 
