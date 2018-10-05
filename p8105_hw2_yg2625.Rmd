@@ -34,7 +34,7 @@ From the data output, we could know it contains variables including `r names(NYC
 
 
 ## Answering question with data
-There are `r count(distinct(NYCsub_data, station_name))` distinct stations. And there are `r count(subset(NYCsub_data, ada == TRUE))` stations are ADA compliant. And the proportion of station entrances/exits without vending allow entrance is `r count(subset(NYCsub_data, vending == "NO" & entry == TRUE))/count(NYCsub_data)`
+There are `r count(distinct(NYCsub_data, station_name, line))` distinct stations. And there are `r count(distinct(subset(NYCsub_data, ada == TRUE), station_name, line))` stations are ADA compliant. And the proportion of station entrances/exits without vending allow entrance is `r count(subset(NYCsub_data, vending == "NO" & entry == TRUE))/count(subset(NYCsub_data, vending == "NO"))`
 
 
 ## Reformat data
@@ -42,7 +42,7 @@ There are `r count(distinct(NYCsub_data, station_name))` distinct stations. And 
 NYCsub_tidy_data = gather(NYCsub_data, key = route, value = route_name, route1:route11)
 ```
 
-There are `r count(distinct(NYCsub_tidy_data, route_name == "A"))` stations serve the A train. And in these stations, `r count(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE))` are ADA compliant.
+There are `r count(distinct(subset(NYCsub_tidy_data, route_name == "A"), station_name, line))` stations serve the A train. And in these stations, `r count(distinct(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE), station_name, line))` are ADA compliant.
 
 
 # Problem 2
@@ -63,25 +63,24 @@ Healthy_data =
 Read and clean precipitation data for 2016 and 2017. Omitting rows, adding variable year, combining datasets and converting month to character as required.
 ```{r}
 Prec_2016 =
-  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2016 Precipitation", range = cell_rows(2:15)) %>% 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2016 Precipitation", range = cell_rows(2:14)) %>% 
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., total != "") %>% 
   mutate(.data = ., year = "2016")
 
 Prec_2017 =
-  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = cell_rows(2:15)) %>% 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = cell_rows(2:14)) %>% 
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., total != "") %>% 
   mutate(.data = ., year = "2017")
 
 Prec_data = 
-  left_join(Prec_2016, Prec_2017, by = "month") %>%
-  filter(.data = ., month != "") %>% 
-  mutate(.data = ., month = month.name)
+  bind_rows(Prec_2016, Prec_2017) %>%
+  mutate(month = month.name[month])
 
 ```
 
-The number of the observations in Mr. Trash is `r nrow(Healthy_data)`, in Precipitation for 2016 is `r nrow(Prec_2016)`, in Precipitation for 2017 is `r nrow(Prec_2017)`, in combined dataset for 2016-2007 precipitation is `r nrow(Prec_data)`. The total precipitation in 2017 is `r max(Prec_2017$total)` and the median of sports balls in a dumpster in 2016 is `r median(Healthy_data$sports_balls)`.
+The number of the observations in Mr. Trash is `r nrow(Healthy_data)`, in Precipitation for 2016 is `r nrow(Prec_2016)`, in Precipitation for 2017 is `r nrow(Prec_2017)`, in combined dataset for 2016-2007 precipitation is `r nrow(Prec_data)`. The total precipitation in 2017 is `r sum(Prec_2017$total)` and the median of sports balls in a dumpster in 2016 is `r median(subset(Healthy_data, year == 2016)$sports_balls)`.
 
 
 ## Problem 3
@@ -108,11 +107,11 @@ There are `r count(distinct(brfss_smart2010_tidy, county))` distinct county and 
 ```{r}
 arrange(count(brfss_smart2010_tidy, state), desc(n))
 ```
-From the output above, we know NJ state is observed the most. And the median of the "Excellent" response value is `r median(subset(brfss_smart2010_tidy, year == "2002")$excellent, na.rm = TRUE)`.
+From the output above, we know NJ state is observed the most with 146 times. And the median of the "Excellent" response value is `r median(subset(brfss_smart2010_tidy, year == "2002")$excellent, na.rm = TRUE)`.
 
 ## Histogram of "excellent" response in 2002
 ```{r}
-ggplot(brfss_smart2010_tidy, aes(x = excellent)) +
+ggplot(subset(brfss_smart2010_tidy, year == 2002), aes(x = excellent)) +
   geom_histogram()
 ```
 
@@ -121,7 +120,7 @@ Showing proportion of "Excellent" in NY and Queens County in each year from 2002
 ```{r}
 brfss_smart2010_tidy_NQ = 
   brfss_smart2010_tidy %>% 
-  filter(.data = ., county == "NY - Queens County" | state == "NY - New York County") %>% 
+  filter(.data = ., county == "NY - Queens County" | county == "NY - New York County") %>% 
   select(.data = ., -fair:-excellent_or_very_good)
 
 ggplot(brfss_smart2010_tidy_NQ, aes(x = year, y = excellent)) +
