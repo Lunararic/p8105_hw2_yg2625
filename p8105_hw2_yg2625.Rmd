@@ -40,6 +40,7 @@ There are `r count(distinct(NYCsub_data, station_name, line))` distinct stations
 ## Reformat data
 ```{r}
 NYCsub_tidy_data = gather(NYCsub_data, key = route, value = route_name, route1:route11)
+NYCsub_tidy_data
 ```
 
 There are `r count(distinct(subset(NYCsub_tidy_data, route_name == "A"), station_name, line))` stations serve the A train. And in these stations, `r count(distinct(subset(NYCsub_tidy_data, route_name == "A" & ada == TRUE), station_name, line))` are ADA compliant.
@@ -56,6 +57,8 @@ Healthy_data =
   filter(.data = ., dumpster != "") %>% 
   rename(.data = ., weight = weight_tons, volume = volume_cubic_yards) %>% 
   mutate(.data = ., sports_balls = as.integer(round(sports_balls)))
+
+Healthy_data
 ```
 
 ## Precipitation Dataset
@@ -67,16 +70,19 @@ Prec_2016 =
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., total != "") %>% 
   mutate(.data = ., year = "2016")
+Prec_2016
 
 Prec_2017 =
   read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = cell_rows(2:14)) %>% 
   janitor::clean_names(dat = .) %>% 
   filter(.data = ., total != "") %>% 
   mutate(.data = ., year = "2017")
+Prec_2017
 
 Prec_data = 
   bind_rows(Prec_2016, Prec_2017) %>%
   mutate(month = month.name[month])
+Prec_data
 
 ```
 
@@ -99,6 +105,8 @@ brfss_smart2010_tidy =
   janitor::clean_names() %>% 
   mutate(.data = ., excellent_or_very_good = excellent + very_good) %>% 
   rename(.data = ., state = locationabbr, county = locationdesc)
+
+brfss_smart2010_tidy
 ```
 
 ## Answering questions
